@@ -16,15 +16,6 @@ def gauss_imp(BT, frequency, span, sample_rate):
     imp /= sum(imp)
     return imp
 
-def convolve(data, imp):
-    out = []
-    for a in range(len(data)):
-        count = 0
-        for i in range(len(imp)):
-            if a - i >= 0:
-                count += imp[i] * data[a - i]
-        out.append(count)
-    return np.array(out)
 
 def periodic_data(num_symbols, num_samples):
     return  scipy.signal.square(
