@@ -51,7 +51,7 @@ def GFSK_mod(carrier_freq, mod_index, mod_sample_rate, data, bit_rate, BT, span)
 
     imp = gauss_imp(BT, span, bit_span)
 
-    filtered_data = convolve(sampled_data, imp)
+    filtered_data = np.convolve(sampled_data, imp, mode="same")
 
     plt.figure()
     plt.plot(filtered_data)
@@ -63,7 +63,16 @@ def GFSK_mod(carrier_freq, mod_index, mod_sample_rate, data, bit_rate, BT, span)
 
     return time, np.cos(2 * np.pi * carrier_freq * time + mod_index * filtered_data)
 
-def transmit(signal):
+def transmit(data):
     # signal is an np.array of the signal we are playing
-    frames_per_second = 48000
-    sd.play(data = signal, samplerate = fs, blocking = False)
+    carrier_freq = 440
+    # nsymb = 8
+    bit_rate = 10
+    BT = 0.5
+    # fc = 1e2
+    mod_index = 5
+    mod_sample_rate = 44000
+    span = 2
+
+    _, signal = GFSK_mod(carrier_freq, mod_index, mod_sample_rate, data, bit_rate, BT, span)
+    sd.play(data = signal, samplerate = mod_sample_rate, blocking = False)
