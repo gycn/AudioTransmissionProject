@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.signal
+import sounddevice as sd
 
 def gauss_imp(BT, frequency, span, sample_rate):
     #num_coefficients is the sampling rate of the filter
@@ -41,23 +42,28 @@ def random_data(num_symbols, num_samples):
 
 def GFSK_mod(carrier_freq, mod_index, mod_sample_rate, data, bit_rate, BT, span):
     total_time = len(data) / bit_rate
-    
+
     time = np.linspace(0, total_time, total_time * mod_sample_rate)
-    
+
     bit_span = mod_sample_rate/bit_rate
-    
+
     sampled_data = np.repeat(data, bit_span)
-    
+
     imp = gauss_imp(BT, span, bit_span)
-    
+
     filtered_data = convolve(sampled_data, imp)
-    
+
     plt.figure()
     plt.plot(filtered_data)
-    
+
     plt.title('Filtered Data')
     plt.xlabel('Time (s)')
     plt.ylabel('Amplitude (V)')
     plt.show()
-    
+
     return time, np.cos(2 * np.pi * carrier_freq * time + mod_index * filtered_data)
+
+def transmit(signal):
+    # signal is an np.array of the signal we are playing
+    frames_per_second = 48000
+    sd.play(data = signal, samplerate = fs, blocking = False)
